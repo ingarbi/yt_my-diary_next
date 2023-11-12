@@ -5,24 +5,21 @@ import Image from "next/image"
 export default function Home() {
 
   const duties = {
-    "daily leetcode":{
-      "10.11.23": true,
-      "11.11.23": false,
-      "12.11.23": true,
-    },
-    "daily React/Next JS":{
-      "10.11.23": false,
-      "11.11.23": true,
-      "12.11.23": true,
-    },
-    "daily Go":{
-      "10.11.23": true,
-      "11.11.23": false,
-      "12.11.23": false,
-    },
   }
-
+  const today = new Date()
+  const todayWeekDay = today.getDay()
   const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+  // console.log(todayWeekDay);
+  
+  const sortedWeekDays = weekDays.slice(todayWeekDay).concat(weekDays.slice(0, todayWeekDay))
+  const last7Days = weekDays.map((_, index)=>{
+    const date = new Date()
+    date.setDate(date.getDate() -index)
+    return date.toISOString().slice(0,10)
+  }).reverse()
+  // console.log(last7Days);
+  
+  // console.log(sortedWeekDays);
   return (
     <main className="container relative flex flex-col gap-8 px-4 pt-16">
       {duties === null || (Object.keys(duties).length === 0 && (
