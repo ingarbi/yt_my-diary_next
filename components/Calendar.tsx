@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import DayState from "./DayState";
+import { toggleDuty } from "@/app/actions";
 
 function getDayInMonth(month: number, year: number) {
   const date = new Date(year, month, 1);
@@ -19,7 +21,13 @@ const currentMonth = currentDate.getMonth();
 const currentYear = currentDate.getFullYear();
 const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-export default function Calendar() {
+export default function Calendar({
+  duty,
+  dutyTime,
+}: {
+  duty: string;
+  dutyTime: Record<string, boolean> | null;
+}) {
   const [month, setMonth] = useState(currentMonth);
   const [year, setYear] = useState(currentYear);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -54,6 +62,13 @@ export default function Calendar() {
       month: "long",
     })} of ${selectedDate.getFullYear()}`;
   }
+  function getCurrentDay(day: Date) {
+    return `${year.toString()}-${(month + 1).toString().padStart(2, "0")}-${day
+      .getDate()
+      .toString()
+      .padStart(2, "0")}`;
+  }
+
   return (
     <section className="w-full my-2 rounded-md bg-neutral-800">
       <div className="flex justify-between mx-2 my-4 font-sans text-neutral-400">
@@ -71,10 +86,24 @@ export default function Calendar() {
         ))}
 
         {daysInMonth.map((day, index) => (
-          <div key={index} className="flex flex-col items-center p-2">
+          <div
+            key={index}
+            className="flex flex-col items-center p-2 hover:cursor-pointer"
+            onClick={() =>
+              toggleDuty({
+                duty,
+                dutyTime,
+                date: getCurrentDay(day),
+                done: dutyTime ? dutyTime[getCurrentDay(day)]: true,
+              })
+            }
+          >
             <span className="font-sans text-xs text-center font-light text-neutral-400">
               {day?.getDate()}
             </span>
+            {day && (
+                <DayState day={dutyTime ? dutyTime[getCurrentDay(day)]: undefined} />
+            )}
           </div>
         ))}
       </div>

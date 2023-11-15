@@ -1,12 +1,14 @@
 import { kv } from "@vercel/kv";
 import DayState from "@/components/DayState";
-import Image from "next/image";
 import Link from "next/link";
+import DeleteButton from "@/components/DeleteButton";
 
 type DutySchedule = { [duty: string]: Record<string, boolean> } | null;
 
 export default async function Home() {
-  const duties: DutySchedule = await kv.hgetall("duties") as DutySchedule | null;
+  const duties: DutySchedule = (await kv.hgetall(
+    "duties"
+  )) as DutySchedule | null;
   const today = new Date();
   const todayWeekDay = today.getDay();
   const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -41,27 +43,20 @@ export default async function Home() {
               <span className="text-xl font-light text-white font-sans">
                 {duty}
               </span>
-              <button>
-                <Image
-                  src="/images/delete.svg"
-                  width={20}
-                  height={20}
-                  alt="Icon delete mark"
-                />
-              </button>
+              <DeleteButton duty={duty} />
             </div>
             <Link href={`duty/${duty}`}>
-            <section className="grid grid-cols-7 bg-neutral-800 rounded-md p-2">
-              {sortedWeekDays.map((day, index) => (
-                <div key={day} className="flex flex-col">
-                  <span className="font-sans text-center text-xs text-white">
-                    {day}
-                  </span>
-                  <DayState day={dutyTime[last7Days[index]]} />
-                </div>
-              ))}
-            </section>
-              </Link>
+              <section className="grid grid-cols-7 bg-neutral-800 rounded-md p-2">
+                {sortedWeekDays.map((day, index) => (
+                  <div key={day} className="flex flex-col">
+                    <span className="font-sans text-center text-xs text-white">
+                      {day}
+                    </span>
+                    <DayState day={dutyTime[last7Days[index]]} />
+                  </div>
+                ))}
+              </section>
+            </Link>
           </div>
         ))}
       <Link
